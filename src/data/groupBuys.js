@@ -1,0 +1,62 @@
+// 공동구매 더미 데이터
+// status: 'recruiting'(모집중) | 'ongoing'(진행중) | 'done'(완료)
+export const groupBuys = [
+  {
+    id: 'g1',
+    title: '생수 2L 12개입 같이 사요',
+    emoji: '💧',
+    price: 8900,
+    perPerson: 2225,
+    current: 3,
+    target: 4,
+    status: 'recruiting',
+    host: '자취왕',
+    deadline: '오늘 마감',
+    location: '그린오피스텔',
+  },
+  {
+    id: 'g2',
+    title: '대용량 휴지 30롤 공구',
+    emoji: '🧻',
+    price: 15900,
+    perPerson: 3975,
+    current: 2,
+    target: 4,
+    status: 'recruiting',
+    host: '깔끔러',
+    deadline: '내일 마감',
+    location: '햇살원룸',
+  },
+  {
+    id: 'g3',
+    title: '치킨 단체주문 (반반)',
+    emoji: '🍗',
+    price: 24000,
+    perPerson: 6000,
+    current: 4,
+    target: 4,
+    status: 'ongoing',
+    host: '복학생A',
+    deadline: '주문 진행중',
+    location: '행복기숙사 2동',
+  },
+  {
+    id: 'g4',
+    title: '종량제 봉투 한 묶음',
+    emoji: '🗑️',
+    price: 6000,
+    perPerson: 1500,
+    current: 4,
+    target: 4,
+    status: 'done',
+    host: '새내기B',
+    deadline: '배분 완료',
+    location: '행복기숙사 3동',
+  },
+];
+
+export const groupBuyStatusMeta = {
+  recruiting: { label: '모집중', tone: 'primary' },
+  ongoing: { label: '진행중', tone: 'info' },
+  done: { label: '완료', tone: 'muted' },
+};

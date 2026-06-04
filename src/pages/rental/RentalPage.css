@@ -1,0 +1,58 @@
+.rental-history-btn {
+  background: none;
+  border: none;
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+  padding: var(--space-2);
+}
+
+.rental-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+.rental-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: flex-start;
+}
+.rental-item__thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  background: var(--color-warm);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-2);
+}
+.rental-item__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-overlay);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  border-radius: var(--radius-sm);
+}
+.rental-item__title {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  min-height: 2.6em;
+}
+.rental-item__fee {
+  font-size: var(--text-body);
+  font-weight: var(--fw-bold);
+  color: var(--color-primary-strong);
+}
+.rental-item__loc {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}

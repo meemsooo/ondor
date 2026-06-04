@@ -1,0 +1,18 @@
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+.section-header__title {
+  font-size: var(--text-h3);
+  font-weight: var(--fw-bold);
+  color: var(--color-text);
+}
+.section-header__action {
+  background: none;
+  border: none;
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  font-weight: var(--fw-medium);
+}

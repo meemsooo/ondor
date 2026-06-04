@@ -1,0 +1,38 @@
+.fab {
+  position: fixed;
+  bottom: calc(var(--bottomnav-height) + var(--space-4));
+  left: 50%;
+  transform: translateX(calc(var(--app-max-width) / 2 - 100%));
+  z-index: var(--z-fab);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 48px;
+  padding: 0 var(--space-5);
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-body);
+  box-shadow: var(--shadow-primary);
+  transition: transform 0.08s ease;
+}
+.fab:active {
+  transform: translateX(calc(var(--app-max-width) / 2 - 100%)) scale(0.96);
+}
+.fab__icon {
+  font-size: 18px;
+}
+
+/* 앱 폭이 최대치보다 좁을 때(모바일)는 화면 우측 기준으로 배치 */
+@media (max-width: 480px) {
+  .fab {
+    left: auto;
+    right: var(--space-4);
+    transform: none;
+  }
+  .fab:active {
+    transform: scale(0.96);
+  }
+}

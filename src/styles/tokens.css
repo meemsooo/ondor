@@ -1,0 +1,88 @@
+/* =============================================================
+   OnDol 디자인 시스템 — 디자인 토큰
+   따뜻한 연주황(#FF8A3D) 기반 / 당근 + 토스 + 오늘의집 감성
+   ============================================================= */
+
+:root {
+  /* ---- Brand / Primary (연주황) ---- */
+  --color-primary: #ff8a3d;
+  --color-primary-strong: #f6731c;
+  --color-primary-soft: #ffe9d8;
+  --color-primary-bg: #fff6ef;
+  --color-primary-text: #ffffff;
+
+  /* ---- Accent (보조 따뜻한 톤) ---- */
+  --color-accent: #ffb35c;
+  --color-warm: #fff0e3;
+
+  /* ---- Semantic ---- */
+  --color-success: #22b07d;
+  --color-success-bg: #e6f7f0;
+  --color-warning: #f5a623;
+  --color-warning-bg: #fff5e0;
+  --color-danger: #ff5a5f;
+  --color-danger-bg: #ffecec;
+  --color-info: #4c8dff;
+  --color-info-bg: #ecf3ff;
+
+  /* ---- Neutral / Gray scale ---- */
+  --color-text: #1c1b1f;
+  --color-text-secondary: #6b6671;
+  --color-text-tertiary: #9b96a1;
+  --color-text-disabled: #c3bfc8;
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f7f6f4;
+  --color-bg-muted: #f0eeec;
+  --color-border: #ececec;
+  --color-border-strong: #dcdada;
+  --color-overlay: rgba(28, 27, 31, 0.45);
+
+  /* ---- Radius ---- */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
+
+  /* ---- Spacing scale (4px 기반) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* ---- Typography ---- */
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+    'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+
+  --text-h1: 24px;
+  --text-h2: 20px;
+  --text-h3: 17px;
+  --text-body: 15px;
+  --text-sm: 13px;
+  --text-xs: 11px;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ---- Shadow ---- */
+  --shadow-sm: 0 1px 2px rgba(28, 27, 31, 0.06);
+  --shadow-md: 0 4px 16px rgba(28, 27, 31, 0.08);
+  --shadow-lg: 0 8px 28px rgba(28, 27, 31, 0.12);
+  --shadow-primary: 0 6px 18px rgba(255, 138, 61, 0.35);
+
+  /* ---- Layout ---- */
+  --app-max-width: 480px;
+  --header-height: 56px;
+  --bottomnav-height: 64px;
+  --z-header: 100;
+  --z-bottomnav: 100;
+  --z-fab: 90;
+  --z-modal: 200;
+}
