@@ -1,15 +1,21 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Header, Badge, Avatar, EmptyState } from '../../components/common';
 import { roommateProfiles, lifestyleFields } from '../../data';
 import { PATHS } from '../../routes/paths';
+import { getMatchedProfiles } from './matchScore';
 import './RoommateMatchingPage.css';
 
 export default function RoommateMatchingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [index, setIndex] = useState(0);
 
-  const profile = roommateProfiles[index];
+  // 설문에서 넘어온 답이 있으면 점수 계산 + 정렬, 없으면 기본 목록(기존 순서)
+  const answers = location.state?.answers;
+  const profiles = answers ? getMatchedProfiles(answers, roommateProfiles) : roommateProfiles;
+
+  const profile = profiles[index];
   const next = () => setIndex((i) => i + 1);
 
   if (!profile) {
@@ -36,7 +42,9 @@ export default function RoommateMatchingPage() {
 
       <div className="page rm-match">
         <div className="rm-match__card">
-          <span className="rm-match__match-chip">매칭률 {profile.matchRate}%</span>
+          <span className="rm-match__match-chip">
+            매칭률 {answers ? profile.matchScore : profile.matchRate}%
+          </span>
           <Avatar emoji={profile.avatar} size="lg" className="rm-match__avatar" />
           <div className="rm-match__name-row">
             <span className="rm-match__name">{profile.nickname}</span>
