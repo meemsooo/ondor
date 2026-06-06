@@ -14,6 +14,7 @@ export const PATHS = {
   RENTAL_HISTORY: '/rental/history',
 
   ROOMMATE: '/roommate',
+  ROOMMATE_SURVEY: '/roommate/survey',
   ROOMMATE_MATCHING: '/roommate/matching',
 
   COMMUNITY: '/community',

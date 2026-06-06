@@ -13,6 +13,7 @@ import RentalPage from '../pages/rental/RentalPage';
 import RentalRegisterPage from '../pages/rental/RentalRegisterPage';
 import RentalHistoryPage from '../pages/rental/RentalHistoryPage';
 import RoommatePage from '../pages/roommate/RoommatePage';
+import SurveyPage from '../pages/roommate/SurveyPage';
 import RoommateMatchingPage from '../pages/roommate/RoommateMatchingPage';
 import CommunityPage from '../pages/community/CommunityPage';
 import ChatListPage from '../pages/chat/ChatListPage';
@@ -41,6 +42,7 @@ export default function AppRoutes() {
 
         {/* 룸메이트 매칭 */}
         <Route path={PATHS.ROOMMATE} element={<RoommatePage />} />
+        <Route path={PATHS.ROOMMATE_SURVEY} element={<SurveyPage />} />
         <Route path={PATHS.ROOMMATE_MATCHING} element={<RoommateMatchingPage />} />
 
         {/* 커뮤니티 */}
