@@ -13,10 +13,10 @@ export default function RoommatePage() {
 
       <div className="page stack">
         {/* 매칭 시작 배너 */}
-        <Card className="rm-banner" onClick={() => navigate(PATHS.ROOMMATE_MATCHING)}>
+        <Card className="rm-banner" onClick={() => navigate(PATHS.ROOMMATE_SURVEY)}>
           <div className="rm-banner__text">
-            <p className="rm-banner__title">나와 잘 맞는 룸메 찾기 🛏️</p>
-            <p className="rm-banner__sub">생활 패턴으로 매칭률을 확인해요</p>
+            <p className="rm-banner__title">나와 맞는 룸메 찾기 (성향 테스트) 🛏️</p>
+            <p className="rm-banner__sub">먼저 생활 성향 설문을 하고 매칭률을 확인해요</p>
           </div>
           <Button size="sm">시작</Button>
         </Card>
