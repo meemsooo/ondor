@@ -15,6 +15,14 @@ export const roommateProfiles = [
     },
     matchRate: 92,
     tags: ['아침형', '비흡연', '깔끔'],
+    surveyAnswers: {
+      sleep: 'early',
+      cleanliness: 'very_clean',
+      smoking: 'non_smoker',
+      noise: 'quiet',
+      sharing: 'partial',
+      social: 'moderate',
+    },
   },
   {
     id: 'rm2',
@@ -31,6 +39,14 @@ export const roommateProfiles = [
     },
     matchRate: 74,
     tags: ['야행성', '조용함', '독립적'],
+    surveyAnswers: {
+      sleep: 'late',
+      cleanliness: 'clean',
+      smoking: 'non_smoker',
+      noise: 'quiet',
+      sharing: 'separate',
+      social: 'independent',
+    },
   },
   {
     id: 'rm3',
@@ -47,6 +63,14 @@ export const roommateProfiles = [
     },
     matchRate: 88,
     tags: ['외향적', '아침형', '활발'],
+    surveyAnswers: {
+      sleep: 'normal',
+      cleanliness: 'clean',
+      smoking: 'non_smoker',
+      noise: 'tolerant',
+      sharing: 'open',
+      social: 'close',
+    },
   },
 ];
 

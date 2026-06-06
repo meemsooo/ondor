@@ -4,5 +4,6 @@ export * from './helpRequests';
 export * from './groupBuys';
 export * from './rentals';
 export * from './roommates';
+export * from './roommateSurvey';
 export * from './community';
 export * from './chats';
