@@ -4,7 +4,7 @@ import { PATHS } from '../routes/paths';
 export const bottomNavItems = [
   { id: 'home', label: '홈', icon: '🏠', path: PATHS.HOME },
   { id: 'help', label: '도움요청', icon: '🙋', path: PATHS.HELP },
-  { id: 'groupbuy', label: '공동구매', icon: '🛒', path: PATHS.GROUPBUY },
+  { id: 'poke', label: '콕 찌르기', icon: '👉', path: PATHS.POKE_SEND },
   { id: 'community', label: '커뮤니티', icon: '💬', path: PATHS.COMMUNITY },
   { id: 'mypage', label: '마이', icon: '👤', path: PATHS.MYPAGE },
 ];
