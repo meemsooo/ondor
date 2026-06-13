@@ -18,6 +18,7 @@ export const PATHS = {
   ROOMMATE_MATCHING: '/roommate/matching',
 
   POKE_SEND: '/poke',
+  POKE_RECEIVED: '/poke/received',
 
   COMMUNITY: '/community',
 
