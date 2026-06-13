@@ -15,6 +15,7 @@ import RentalHistoryPage from '../pages/rental/RentalHistoryPage';
 import RoommatePage from '../pages/roommate/RoommatePage';
 import SurveyPage from '../pages/roommate/SurveyPage';
 import RoommateMatchingPage from '../pages/roommate/RoommateMatchingPage';
+import PokeSendPage from '../pages/poke/PokeSendPage';
 import CommunityPage from '../pages/community/CommunityPage';
 import ChatListPage from '../pages/chat/ChatListPage';
 import ChatRoomPage from '../pages/chat/ChatRoomPage';
@@ -44,6 +45,9 @@ export default function AppRoutes() {
         <Route path={PATHS.ROOMMATE} element={<RoommatePage />} />
         <Route path={PATHS.ROOMMATE_SURVEY} element={<SurveyPage />} />
         <Route path={PATHS.ROOMMATE_MATCHING} element={<RoommateMatchingPage />} />
+
+        {/* 콕 찌르기 */}
+        <Route path={PATHS.POKE_SEND} element={<PokeSendPage />} />
 
         {/* 커뮤니티 */}
         <Route path={PATHS.COMMUNITY} element={<CommunityPage />} />
