@@ -17,4 +17,5 @@ export const homeShortcuts = [
   { id: 'roommate', label: '룸메이트', emoji: '🛏️', path: PATHS.ROOMMATE, color: '#fff5e0' },
   { id: 'community', label: '커뮤니티', emoji: '💬', path: PATHS.COMMUNITY, color: '#ffecec' },
   { id: 'chat', label: '채팅', emoji: '✉️', path: PATHS.CHAT, color: '#f0eeec' },
+  { id: 'poke', label: '콕 찌르기', emoji: '👉', path: PATHS.POKE_SEND, color: '#fff0e3' },
 ];
