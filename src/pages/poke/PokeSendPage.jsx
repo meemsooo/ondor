@@ -60,6 +60,33 @@ export default function PokeSendPage() {
       <Header title="콕 찌르기" back right={receivedButton} />
 
       <div className="form page">
+        {/* 받은 찌르기 알림 배너 (안 읽은 게 있을 때만) */}
+        {unreadCount > 0 && (
+          <Card
+            onClick={() => navigate(PATHS.POKE_RECEIVED)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-3)',
+              background: 'var(--color-primary-bg)',
+              border: '1px solid var(--color-primary-soft)',
+            }}
+          >
+            <span style={{ fontSize: 'var(--text-h3)' }}>👉</span>
+            <span
+              style={{
+                flex: 1,
+                fontSize: 'var(--text-sm)',
+                fontWeight: 'var(--fw-medium)',
+                color: 'var(--color-text)',
+              }}
+            >
+              받은 콕 찌르기가 {unreadCount}개 있어요
+            </span>
+            <span style={{ color: 'var(--color-text-tertiary)' }}>›</span>
+          </Card>
+        )}
+
         {/* 받는 대상 */}
         <div className="form-field">
           <label className="form-label">동</label>
