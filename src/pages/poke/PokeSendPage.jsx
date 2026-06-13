@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Header, Card, Button, EmptyState } from '../../components/common';
-import { pokeCategories } from '../../data';
+import { Header, Card, Button, Badge, EmptyState } from '../../components/common';
+import { pokeCategories, receivedPokes } from '../../data';
 import { PATHS } from '../../routes/paths';
 import '../../styles/form.css';
 import './PokeSendPage.css';
@@ -18,6 +18,19 @@ export default function PokeSendPage() {
 
   const selectedCategory = pokeCategories.find((c) => c.id === categoryId);
   const canSend = building !== null && room.trim() !== '' && categoryId !== null;
+
+  // 안 읽은 알림 개수 → 헤더 '받은 알림' 버튼에 표시
+  const unreadCount = receivedPokes.filter((p) => !p.isRead).length;
+  const receivedButton = (
+    <button
+      className="app-header__icon-btn"
+      onClick={() => navigate(PATHS.POKE_RECEIVED)}
+      aria-label="받은 알림"
+    >
+      🔔
+      {unreadCount > 0 && <Badge tone="danger">{unreadCount}</Badge>}
+    </button>
+  );
 
   const handleSend = () => {
     if (!canSend) return;
@@ -44,7 +57,7 @@ export default function PokeSendPage() {
 
   return (
     <>
-      <Header title="콕 찌르기" back />
+      <Header title="콕 찌르기" back right={receivedButton} />
 
       <div className="form page">
         {/* 받는 대상 */}
