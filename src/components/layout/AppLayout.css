@@ -1,0 +1,31 @@
+.app-shell {
+  position: relative;
+  width: 100%;
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  min-height: 100svh;
+  background: var(--color-bg-subtle);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.04);
+}
+.app-content {
+  /* 하단 네비게이션 높이만큼 여백 확보 */
+  padding-bottom: calc(var(--bottomnav-height) + var(--space-4));
+  min-height: 100svh;
+}
+
+/* 페이지 내부 공통 패딩 컨테이너 */
+.page {
+  padding: var(--space-4);
+}
+.page--flush {
+  padding: 0;
+}
+
+/* 세로 스택 헬퍼 */
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+.stack > * + * {
+  margin-top: var(--space-3);
+}

@@ -1,0 +1,57 @@
+/* 콕 찌르기 — 기존 디자인 토큰 재사용 */
+
+/* 카테고리 선택 그리드 */
+.poke-cats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+.poke-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-3);
+  text-align: center;
+  border: 1px solid var(--color-border);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.poke-cat__emoji {
+  font-size: var(--text-h1);
+}
+.poke-cat__label {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+}
+.poke-cat.is-selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+.poke-cat.is-selected .poke-cat__label {
+  color: var(--color-primary-strong);
+  font-weight: var(--fw-semibold);
+}
+
+/* 메시지 미리보기 */
+.poke-preview {
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+}
+.poke-preview__label {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-2);
+}
+.poke-preview__msg {
+  font-size: var(--text-body);
+  font-weight: var(--fw-medium);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+.poke-preview__note {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,17 @@
+.card {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card--padded {
+  padding: var(--space-4);
+}
+.card--clickable {
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.15s ease;
+}
+.card--clickable:active {
+  transform: scale(0.99);
+  box-shadow: var(--shadow-md);
+}

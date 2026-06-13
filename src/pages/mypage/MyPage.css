@@ -1,0 +1,132 @@
+/* 프로필 */
+.mypage-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.mypage-profile__info {
+  flex: 1;
+}
+.mypage-profile__name {
+  font-size: var(--text-h2);
+  font-weight: var(--fw-bold);
+}
+.mypage-profile__loc {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+.mypage-profile__edit {
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-muted);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+}
+
+/* 온돌지수 */
+.mypage-score {
+  background: linear-gradient(135deg, #fff6ef, #ffe9d8);
+  box-shadow: none;
+}
+.mypage-score__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mypage-score__label {
+  font-weight: var(--fw-bold);
+  color: var(--color-primary-strong);
+}
+.mypage-score__temp {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-primary-strong);
+}
+.mypage-score__value {
+  font-size: 40px;
+  font-weight: var(--fw-bold);
+  color: var(--color-primary-strong);
+  margin: var(--space-2) 0;
+}
+.mypage-score__bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.mypage-score__fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+.mypage-score__hint {
+  margin-top: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-primary-strong);
+  opacity: 0.8;
+}
+
+/* 활동 통계 */
+.mypage-stats {
+  display: flex;
+  justify-content: space-around;
+}
+.mypage-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.mypage-stat__emoji {
+  font-size: 22px;
+}
+.mypage-stat__value {
+  font-size: var(--text-h3);
+  font-weight: var(--fw-bold);
+  color: var(--color-primary-strong);
+}
+.mypage-stat__label {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* 메뉴 */
+.mypage-menu__title {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-2);
+  padding-left: var(--space-1);
+}
+.mypage-menu__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: none;
+  border: none;
+  text-align: left;
+}
+.mypage-menu__item--divider {
+  border-top: 1px solid var(--color-border);
+}
+.mypage-menu__emoji {
+  font-size: 18px;
+}
+.mypage-menu__label {
+  flex: 1;
+  font-size: var(--text-body);
+}
+.mypage-menu__arrow {
+  color: var(--color-text-tertiary);
+  font-size: 18px;
+}
+.mypage-version {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-text-disabled);
+  padding: var(--space-4) 0;
+}
