@@ -5,5 +5,6 @@ export * from './groupBuys';
 export * from './rentals';
 export * from './roommates';
 export * from './roommateSurvey';
+export * from './pokes';
 export * from './community';
 export * from './chats';
