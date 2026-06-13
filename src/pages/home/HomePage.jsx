@@ -10,6 +10,7 @@ import {
   noticeList,
   helpStatusMeta,
   groupBuyStatusMeta,
+  receivedPokes,
 } from '../../data';
 import './HomePage.css';
 
@@ -20,6 +21,7 @@ export default function HomePage() {
   const recentGroupBuy = groupBuys.filter((g) => g.status === 'recruiting').slice(0, 2);
   const popularPosts = [...communityPosts].sort((a, b) => b.likes - a.likes).slice(0, 3);
   const latestNotice = noticeList[0];
+  const unreadPokeCount = receivedPokes.filter((p) => !p.isRead).length;
 
   return (
     <>
@@ -27,9 +29,21 @@ export default function HomePage() {
         title="🔥 온돌"
         showChat
         right={
-          <button className="home-profile-btn" onClick={() => navigate(PATHS.MYPAGE)}>
-            <Avatar emoji={currentUser.avatar} size="sm" />
-          </button>
+          <>
+            <button
+              className="app-header__icon-btn home-poke-btn"
+              onClick={() => navigate(PATHS.POKE_SEND)}
+              aria-label="콕 찌르기"
+            >
+              👉
+              {unreadPokeCount > 0 && (
+                <span className="home-poke-btn__count">{unreadPokeCount}</span>
+              )}
+            </button>
+            <button className="home-profile-btn" onClick={() => navigate(PATHS.MYPAGE)}>
+              <Avatar emoji={currentUser.avatar} size="sm" />
+            </button>
+          </>
         }
       />
 
