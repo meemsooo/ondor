@@ -30,3 +30,31 @@ export async function getLatestDormNotice() {
   const notices = await fetchDormNotices();
   return notices.length > 0 ? notices[0] : null;
 }
+
+/**
+ * 공지사항 상세 정보 조회
+ * 
+ * @param {string|number} id - 공지사항 ID
+ * @returns {Promise<Object>} 공지사항 상세 정보
+ */
+export async function fetchNoticeDetail(id) {
+  try {
+    // 더미 데이터에서 조회
+    const notice = dormNotices.find((n) => n.id === String(id));
+    
+    if (!notice) {
+      throw new Error(`Notice not found: ${id}`);
+    }
+
+    // 실제 API 호출 예시 (미래):
+    // const API_URL = `https://your-worker.yourname.workers.dev/dorm-notices/${id}`;
+    // const response = await fetch(API_URL);
+    // if (!response.ok) throw new Error('Failed to fetch notice detail');
+    // return await response.json();
+
+    return notice;
+  } catch (error) {
+    console.error('Failed to fetch notice detail:', error);
+    throw error;
+  }
+}

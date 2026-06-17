@@ -8,6 +8,9 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 61,
     crawledAt: '2026-06-04T00:00:00Z',
   },
   {
@@ -17,6 +20,9 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 194,
     crawledAt: '2026-06-01T00:00:00Z',
   },
   {
@@ -26,6 +32,9 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 193,
     crawledAt: '2026-05-26T00:00:00Z',
   },
   {
@@ -35,6 +44,9 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 447,
     crawledAt: '2026-05-26T00:00:00Z',
   },
   {
@@ -44,6 +56,9 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 327,
     crawledAt: '2026-05-12T00:00:00Z',
   },
   {
@@ -53,6 +68,9 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 0,
     crawledAt: '2026-04-07T00:00:00Z',
   },
   {
@@ -62,6 +80,9 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 0,
     crawledAt: '2026-04-02T00:00:00Z',
   },
   {
@@ -71,6 +92,9 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 0,
     crawledAt: '2026-03-16T00:00:00Z',
   },
   {
@@ -80,6 +104,9 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 0,
     crawledAt: '2026-03-09T00:00:00Z',
   },
   {
@@ -89,6 +116,10 @@ export const dormNotices = [
     category: '공지',
     source: '수원대학교 기숙사',
     link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
+    author: '기숙사',
+    views: 0,
     crawledAt: '2026-03-05T00:00:00Z',
   },
 ];
+

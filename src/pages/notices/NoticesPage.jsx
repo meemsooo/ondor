@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header, Card, Badge, EmptyState } from '../../components/common';
 import { fetchDormNotices } from '../../services/noticeService';
+import { to } from '../../routes/paths';
 import './NoticesPage.css';
 
 export default function NoticesPage() {
@@ -28,7 +29,12 @@ export default function NoticesPage() {
     loadNotices();
   }, []);
 
-  const handleViewOriginal = (link) => {
+  const handleCardClick = (noticeId) => {
+    navigate(to.noticeDetail(noticeId));
+  };
+
+  const handleViewOriginal = (e, link) => {
+    e.stopPropagation();
     window.open(link, '_blank');
   };
 
@@ -65,7 +71,11 @@ export default function NoticesPage() {
           <EmptyState emoji="📢" title="공지사항이 없습니다" description="나중에 다시 확인해주세요." />
         ) : (
           notices.map((notice) => (
-            <Card key={notice.id} className="notice-card">
+            <Card
+              key={notice.id}
+              className="notice-card notice-card--clickable"
+              onClick={() => handleCardClick(notice.id)}
+            >
               <div className="notice-card__head">
                 <Badge tone="info" size="sm">
                   {notice.category}
@@ -75,10 +85,13 @@ export default function NoticesPage() {
               <h3 className="notice-card__title">{notice.title}</h3>
               <div className="notice-card__meta">
                 <span className="notice-card__source">📌 {notice.source}</span>
+                {notice.views !== undefined && (
+                  <span className="notice-card__views">👁 {notice.views}</span>
+                )}
               </div>
               <button
                 className="notice-card__btn"
-                onClick={() => handleViewOriginal(notice.link)}
+                onClick={(e) => handleViewOriginal(e, notice.link)}
               >
                 원문보기
               </button>

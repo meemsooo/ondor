@@ -1,10 +1,13 @@
 .notice-card {
   padding: var(--space-4);
+}
+
+.notice-card--clickable {
   cursor: pointer;
   transition: transform 0.08s ease, box-shadow 0.15s ease;
 }
 
-.notice-card:active {
+.notice-card--clickable:active {
   transform: scale(0.99);
   box-shadow: var(--shadow-md);
 }
@@ -42,6 +45,11 @@
 .notice-card__source {
   font-size: var(--text-xs);
   color: var(--color-text-secondary);
+}
+
+.notice-card__views {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
 }
 
 .notice-card__btn {
