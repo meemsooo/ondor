@@ -4,6 +4,7 @@ import { Header, Button } from '../../components/common';
 import { helpCategories } from '../../data';
 import { PATHS } from '../../routes/paths';
 import '../../styles/form.css';
+import { helpRequests } from '../../data';
 
 export default function HelpWritePage() {
   const navigate = useNavigate();
@@ -14,6 +15,16 @@ export default function HelpWritePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    helpRequests.push({
+     id: Date.now(),
+      categoryId: category,
+      title,
+      content,
+      reward,
+     location: '내 위치',
+     createdAt: '방금 전',
+     status: 'waiting',
+});
     // MVP: 더미 동작 — 실제 저장 없이 목록으로 이동
     alert('도움 요청이 등록되었어요! (더미)');
     navigate(PATHS.HELP);

@@ -13,8 +13,21 @@ const filterTabs = [
 export default function HelpPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState('all');
+  const [refresh, setRefresh] = useState(false);
 
-  const list = helpRequests.filter((h) => tab === 'all' || h.categoryId === tab);
+  const handleDelete = (id) => {
+  if (!window.confirm("정말 삭제할까요?")) return;
+
+  const index = helpRequests.findIndex((h) => h.id === id);
+  if (index !== -1) {
+    helpRequests.splice(index, 1);
+    setRefresh(!refresh);
+  }
+};
+
+  const list = helpRequests.filter(
+    (h) => tab === 'all' || h.categoryId === tab
+  );
 
   return (
     <>
@@ -38,7 +51,11 @@ export default function HelpPage() {
           list.map((h) => {
             const cat = helpCategories.find((c) => c.id === h.categoryId);
             return (
-              <Card key={h.id} onClick={() => navigate(to.helpMatching(h.id))}>
+              <Card 
+                 key={h.id}
+                 style={{ position : "relative"}} 
+                 onClick={() => navigate(to.helpMatching(h.id))}>
+
                 <div className="help-card__top">
                   <span className="help-card__cat">
                     {cat?.emoji} {cat?.label}
@@ -54,6 +71,26 @@ export default function HelpPage() {
                   <span>🎁 {h.reward}</span>
                   <span className="help-card__time">{h.createdAt}</span>
                 </div>
+                {/* ✅ 삭제 버튼 (맨 아래!) */}
+                {h.location === '내 위치' && (
+                <div style={{ textAlign: "right", marginTop: "6px" }}>
+                <button
+                 onClick={(e) => {
+                 e.stopPropagation();
+                  handleDelete(h.id);
+                }}
+                style={{
+                 background: "none",
+                 border: "none",
+                 color: "#aaa",
+                 fontSize: "12px",
+                 cursor: "pointer"
+                }}
+    >
+      삭제
+    </button>
+  </div>
+                )}
               </Card>
             );
           })
