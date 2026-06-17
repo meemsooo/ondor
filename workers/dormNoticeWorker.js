@@ -86,38 +86,91 @@ async function handleRequest(request) {
 /**
  * HTML에서 공지사항 추출
  * 
- * 주의: 이 함수는 사이트 구조에 따라 커스터마이징 필요
- * 
- * 기숙사 홈페이지의 HTML 구조를 분석하여 작성
- * 예: 테이블, 리스트 등 상황에 맞게 수정
+ * HTML table 구조 기준:
+ * <table>
+ *   <tbody>
+ *     <tr>
+ *       <td>번호</td>
+ *       <td><a href="...">제목</a></td>
+ *       <td>글쓴이</td>
+ *       <td>작성일</td>
+ *       <td>조회수</td>
+ *     </tr>
+ *   </tbody>
+ * </table>
  */
 function parseNotices(html) {
   try {
-    // 더미 파싱 예시 (실제로는 사이트의 HTML 구조 분석 필요)
-    // 일반적인 웹사이트 구조:
-    // 1. 테이블 행 추출: document.querySelectorAll('tr')
-    // 2. 각 행에서 제목, 날짜, 링크 추출
-    // 3. JSON 배열로 변환
-
     const notices = [];
 
-    // 예시: 정규식을 사용한 간단한 파싱
-    // 실제로는 더 정교한 HTML 파싱 라이브러리 사용 권장
-    // (예: cheerio, htmlparser2 등 - Cloudflare Workers와 호환 필요)
+    // 테이블 행 추출 (tr 태그)
+    const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+    let rowMatch;
+    let rowIndex = 0;
 
-    // 매우 기본적인 예시:
-    // const titleRegex = /<a[^>]*href=["']([^"']*)[^>]*>([^<]*)<\/a>/g;
-    // let match;
-    // while ((match = titleRegex.exec(html)) !== null) {
-    //   notices.push({
-    //     title: match[2].trim(),
-    //     link: match[1],
-    //     date: extractDate(html, match.index),
-    //   });
-    // }
+    while ((rowMatch = rowRegex.exec(html)) !== null) {
+      const rowContent = rowMatch[1];
+      
+      // 헤더 행 제외 (th 태그 포함)
+      if (rowContent.includes('<th')) continue;
 
-    // 실제 구현을 위해서는 사이트의 HTML 구조를 상세히 분석하고
-    // 적절한 선택자 또는 정규식을 작성해야 함
+      // 셀 데이터 추출
+      const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+      const cells = [];
+      let cellMatch;
+
+      while ((cellMatch = cellRegex.exec(rowContent)) !== null) {
+        cells.push(cellMatch[1]);
+      }
+
+      // 최소 4개 셀이 있어야 함 (번호, 제목, 글쓴이, 작성일)
+      if (cells.length < 4) continue;
+
+      // 제목에서 링크 추출 (두 번째 셀)
+      const titleCell = cells[1];
+      const linkMatch = titleCell.match(/<a[^>]*href=["']([^"']*)[^>]*>([\s\S]*?)<\/a>/i);
+      
+      const title = linkMatch 
+        ? stripHtml(linkMatch[2]).trim()
+        : stripHtml(titleCell).trim();
+      
+      let link = linkMatch 
+        ? linkMatch[1]
+        : 'https://swudorm.suwon.ac.kr/index.html?menuno=2158';
+
+      // 상대 경로를 절대 경로로 변환
+      if (link.startsWith('/')) {
+        link = 'https://swudorm.suwon.ac.kr' + link;
+      } else if (!link.startsWith('http')) {
+        link = 'https://swudorm.suwon.ac.kr/' + link;
+      }
+
+      // 글쓴이 (세 번째 셀)
+      const author = stripHtml(cells[2]).trim();
+
+      // 작성일 (네 번째 셀, YYYY-MM-DD 형식으로 정규화)
+      const dateStr = stripHtml(cells[3]).trim();
+      const date = normalizeDate(dateStr);
+
+      // 조회수 (다섯 번째 셀, 선택사항)
+      const views = cells.length > 4 ? stripHtml(cells[4]).trim() : '0';
+
+      // 제목이 있는 경우만 추가
+      if (title) {
+        notices.push({
+          id: `notice_${rowIndex}`,
+          title,
+          date,
+          category: '공지',
+          source: '수원대학교 기숙사',
+          link,
+          author,
+          views: parseInt(views) || 0,
+          crawledAt: new Date().toISOString(),
+        });
+        rowIndex++;
+      }
+    }
 
     return notices;
   } catch (error) {
@@ -127,14 +180,52 @@ function parseNotices(html) {
 }
 
 /**
- * HTML에서 날짜 추출 (예시)
+ * HTML 태그 제거
  */
-function extractDate(html, index) {
-  // 주어진 index 근처에서 날짜 정보 추출
-  // 형식: YYYY-MM-DD
-  const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
-  const match = html.substring(Math.max(0, index - 100), index + 100).match(dateRegex);
-  return match ? `${match[1]}-${match[2]}-${match[3]}` : new Date().toISOString().split('T')[0];
+function stripHtml(html) {
+  return html.replace(/<[^>]*>/g, '').trim();
+}
+
+/**
+ * 날짜 형식 정규화 (YYYY-MM-DD)
+ * 
+ * 입력 형식:
+ * - "2026-06-04"
+ * - "2026.06.04"
+ * - "06-04" (올해)
+ * - "2026/06/04"
+ */
+function normalizeDate(dateStr) {
+  // 이미 YYYY-MM-DD 형식인 경우
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return dateStr;
+  }
+
+  // YYYY.MM.DD 형식
+  if (/^\d{4}\.\d{2}\.\d{2}$/.test(dateStr)) {
+    return dateStr.replace(/\./g, '-');
+  }
+
+  // YYYY/MM/DD 형식
+  if (/^\d{4}\/\d{2}\/\d{2}$/.test(dateStr)) {
+    return dateStr.replace(/\//g, '-');
+  }
+
+  // MM-DD 형식 (현재 연도로 가정)
+  if (/^\d{2}-\d{2}$/.test(dateStr)) {
+    const year = new Date().getFullYear();
+    return `${year}-${dateStr}`;
+  }
+
+  // MM/DD 형식 (현재 연도로 가정)
+  if (/^\d{2}\/\d{2}$/.test(dateStr)) {
+    const year = new Date().getFullYear();
+    const [month, day] = dateStr.split('/');
+    return `${year}-${month}-${day}`;
+  }
+
+  // 파싱 실패시 현재 날짜 반환
+  return new Date().toISOString().split('T')[0];
 }
 
 /**
