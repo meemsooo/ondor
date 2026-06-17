@@ -1,13 +1,14 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header, Card, Badge, SectionHeader, Avatar } from '../../components/common';
 import { homeShortcuts } from '../../config/navigation';
 import { PATHS, to } from '../../routes/paths';
+import { fetchDormNotices } from '../../services/noticeService';
 import {
   currentUser,
   helpRequests,
   groupBuys,
   communityPosts,
-  noticeList,
   helpStatusMeta,
   groupBuyStatusMeta,
   receivedPokes,
@@ -16,11 +17,26 @@ import './HomePage.css';
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const [dormNotices, setDormNotices] = useState([]);
+
+  useEffect(() => {
+    const loadNotices = async () => {
+      try {
+        const notices = await fetchDormNotices();
+        setDormNotices(notices);
+      } catch (error) {
+        console.error('Failed to load dorm notices:', error);
+        setDormNotices([]);
+      }
+    };
+
+    loadNotices();
+  }, []);
 
   const recentHelp = helpRequests.slice(0, 2);
   const recentGroupBuy = groupBuys.filter((g) => g.status === 'recruiting').slice(0, 2);
   const popularPosts = [...communityPosts].sort((a, b) => b.likes - a.likes).slice(0, 3);
-  const latestNotice = noticeList[0];
+  const latestDormNotice = dormNotices.length > 0 ? dormNotices[0] : null;
   const unreadPokeCount = receivedPokes.filter((p) => !p.isRead).length;
 
   return (
@@ -29,7 +45,7 @@ export default function HomePage() {
         title="🔥 온돌"
         showChat
         right={
-          <>
+          <div className="home-header-right">
             <button
               className="app-header__icon-btn home-poke-btn"
               onClick={() => navigate(PATHS.POKE_SEND)}
@@ -40,10 +56,19 @@ export default function HomePage() {
                 <span className="home-poke-btn__count">{unreadPokeCount}</span>
               )}
             </button>
+            <button
+              className="home-notice-btn"
+              onClick={() => navigate(PATHS.NOTICES)}
+              aria-label="공지사항"
+              title="기숙사 공지사항"
+            >
+              🔔
+              <span className="home-notice-badge"></span>
+            </button>
             <button className="home-profile-btn" onClick={() => navigate(PATHS.MYPAGE)}>
               <Avatar emoji={currentUser.avatar} size="sm" />
             </button>
-          </>
+          </div>
         }
       />
 
@@ -57,10 +82,10 @@ export default function HomePage() {
         </div>
 
         {/* 공지사항 배너 */}
-        {latestNotice ? (
-          <Card className="home-notice" onClick={() => navigate(PATHS.COMMUNITY)}>
+        {latestDormNotice ? (
+          <Card className="home-notice" onClick={() => navigate(PATHS.NOTICES)}>
             <span className="home-notice__tag">📢 공지</span>
-            <span className="home-notice__text line-clamp-1">{latestNotice.title}</span>
+            <span className="home-notice__text line-clamp-1">{latestDormNotice.title}</span>
             <span className="home-notice__arrow">›</span>
           </Card>
         ) : null}

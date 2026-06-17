@@ -18,6 +18,8 @@ import RoommateMatchingPage from '../pages/roommate/RoommateMatchingPage';
 import PokeSendPage from '../pages/poke/PokeSendPage';
 import PokeReceivedPage from '../pages/poke/PokeReceivedPage';
 import CommunityPage from '../pages/community/CommunityPage';
+import NoticesPage from '../pages/notices/NoticesPage';
+import NoticeDetailPage from '../pages/notices/NoticeDetailPage';
 import ChatListPage from '../pages/chat/ChatListPage';
 import ChatRoomPage from '../pages/chat/ChatRoomPage';
 import MyPage from '../pages/mypage/MyPage';
@@ -53,6 +55,10 @@ export default function AppRoutes() {
 
         {/* 커뮤니티 */}
         <Route path={PATHS.COMMUNITY} element={<CommunityPage />} />
+
+        {/* 기숙사 공지사항 */}
+        <Route path={PATHS.NOTICES} element={<NoticesPage />} />
+        <Route path={PATHS.NOTICES_DETAIL} element={<NoticeDetailPage />} />
 
         {/* 채팅 */}
         <Route path={PATHS.CHAT} element={<ChatListPage />} />

@@ -22,6 +22,9 @@ export const PATHS = {
 
   COMMUNITY: '/community',
 
+  NOTICES: '/notices',
+  NOTICES_DETAIL: '/notices/:id',
+
   CHAT: '/chat',
   CHAT_ROOM: '/chat/:id',
 
@@ -32,5 +35,6 @@ export const PATHS = {
 export const to = {
   helpMatching: (id) => `/help/${id}/matching`,
   groupBuyDetail: (id) => `/group-buy/${id}`,
+  noticeDetail: (id) => `/notices/${id}`,
   chatRoom: (id) => `/chat/${id}`,
 };
