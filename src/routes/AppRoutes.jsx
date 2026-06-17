@@ -15,6 +15,7 @@ import RentalHistoryPage from '../pages/rental/RentalHistoryPage';
 import RoommatePage from '../pages/roommate/RoommatePage';
 import RoommateMatchingPage from '../pages/roommate/RoommateMatchingPage';
 import CommunityPage from '../pages/community/CommunityPage';
+import NoticesPage from '../pages/notices/NoticesPage';
 import ChatListPage from '../pages/chat/ChatListPage';
 import ChatRoomPage from '../pages/chat/ChatRoomPage';
 import MyPage from '../pages/mypage/MyPage';
@@ -45,6 +46,9 @@ export default function AppRoutes() {
 
         {/* 커뮤니티 */}
         <Route path={PATHS.COMMUNITY} element={<CommunityPage />} />
+
+        {/* 기숙사 공지사항 */}
+        <Route path={PATHS.NOTICES} element={<NoticesPage />} />
 
         {/* 채팅 */}
         <Route path={PATHS.CHAT} element={<ChatListPage />} />

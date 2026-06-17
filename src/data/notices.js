@@ -1,0 +1,48 @@
+// 기숙사 공지사항 더미 데이터
+export const dormNotices = [
+  {
+    id: '1',
+    title: '[공지] 6월 기숙사 소방 점검 안내',
+    date: '2026-06-10',
+    category: '공지',
+    source: '관리사무소',
+    link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    crawledAt: '2026-06-10T10:00:00Z',
+  },
+  {
+    id: '2',
+    title: '2026학년도 1학기 기숙사 입사안내',
+    date: '2026-06-08',
+    category: '입사안내',
+    source: '관리사무소',
+    link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    crawledAt: '2026-06-08T14:30:00Z',
+  },
+  {
+    id: '3',
+    title: '2026학년도 1학기 아마랜스식당 운영 안내',
+    date: '2026-06-05',
+    category: '식당',
+    source: '관리사무소',
+    link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    crawledAt: '2026-06-05T09:00:00Z',
+  },
+  {
+    id: '4',
+    title: '기숙사 생활규칙 준수 안내',
+    date: '2026-06-01',
+    category: '공지',
+    source: '관리사무소',
+    link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    crawledAt: '2026-06-01T10:00:00Z',
+  },
+  {
+    id: '5',
+    title: '5월 기숙사 에너지 절감 캠페인 결과',
+    date: '2026-05-28',
+    category: '캠페인',
+    source: '관리사무소',
+    link: 'https://swudorm.suwon.ac.kr/index.html?menuno=2158',
+    crawledAt: '2026-05-28T15:00:00Z',
+  },
+];

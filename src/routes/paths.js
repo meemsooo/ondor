@@ -18,6 +18,8 @@ export const PATHS = {
 
   COMMUNITY: '/community',
 
+  NOTICES: '/notices',
+
   CHAT: '/chat',
   CHAT_ROOM: '/chat/:id',
 
