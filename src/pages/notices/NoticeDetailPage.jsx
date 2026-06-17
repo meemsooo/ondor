@@ -95,7 +95,7 @@ export default function NoticeDetailPage() {
                   <p key={idx}>{line || '\u00A0'}</p>
                 ))
               ) : (
-                <p className="notice-detail__text--muted">본문 내용을 불러올 수 없습니다.</p>
+                <p className="notice-detail__text--muted">이 공지의 상세 내용은 학교 원문에서 확인해주세요.</p>
               )}
             </div>
           </Card>
