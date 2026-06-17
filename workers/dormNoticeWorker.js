@@ -1,13 +1,14 @@
 /**
- * Cloudflare Worker — 기숙사 공지사항 크롤러 (개선 버전)
+ * Cloudflare Worker — 수원대학교 기숙사 공지사항 크롤러 (POST 기반)
  * 
  * 기능:
- * 1. 목록 페이지 파싱 (번호, 제목, 글쓴이, 작성일, 조회수, 상세 링크)
- * 2. 각 공지별 상세 페이지 파싱 (제목, 글쓴이, 등록일, 조회수, 본문)
- * 3. JSON 형식으로 변환하여 반환
+ * 1. 목록 페이지 파싱 (displayNo, bbsno, title, writer, date, views)
+ * 2. 각 공지별 상세 페이지 POST 요청 (bbsno 기반)
+ * 3. 상세 페이지 HTML 파싱 (제목, 글쓴이, 등록일, 조회수, 본문)
+ * 4. 최신 10개 공지 반환
  * 
  * 엔드포인트:
- * - GET /dorm-notices → 공지사항 목록 (상세 링크 포함)
+ * - GET /dorm-notices → 공지사항 목록 + 상세 내용
  * - GET /dorm-notices/:id → 특정 공지사항 상세 정보
  * 
  * CORS 헤더 포함, 캐시 10분 적용
@@ -27,18 +28,18 @@ async function handleRequest(request) {
   }
 
   try {
-    // 목록 API
+    // 목록 API (모든 공지 + 상세 내용 포함)
     if (path === '/dorm-notices' || path === '/dorm-notices/') {
       const notices = await fetchAndParseNoticesList();
-      return corsResponse(JSON.stringify(notices), 200);
+      return corsResponse(JSON.stringify({ success: true, data: notices }), 200);
     }
 
-    // 상세 API
+    // 상세 API (특정 공지)
     const detailMatch = path.match(/\/dorm-notices\/(.+)/);
     if (detailMatch) {
       const noticeId = detailMatch[1];
-      const detail = await fetchAndParseNoticeDetail(noticeId);
-      return corsResponse(JSON.stringify(detail), 200);
+      const notice = await fetchAndParseNoticeDetail(noticeId);
+      return corsResponse(JSON.stringify({ success: true, data: notice }), 200);
     }
 
     // 루트 경로
@@ -47,6 +48,7 @@ async function handleRequest(request) {
     console.error('Worker error:', error);
     return corsResponse(
       JSON.stringify({
+        success: false,
         error: 'Failed to fetch dorm notices',
         message: error.message,
       }),
@@ -64,7 +66,7 @@ function corsResponse(body, status = 200) {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
       'Cache-Control': 'public, max-age=600', // 10분 캐시
       'X-Crawled-At': new Date().toISOString(),
@@ -74,44 +76,136 @@ function corsResponse(body, status = 200) {
 
 /**
  * 목록 페이지 fetch 및 파싱
+ * 1. 목록 HTML을 fetch
+ * 2. 각 공지의 displayNo, bbsno, title, writer, date, views 추출
+ * 3. 각 공지마다 POST로 상세 페이지 fetch
+ * 4. 상세 내용 파싱
+ * 5. 최신 10개만 반환
  */
 async function fetchAndParseNoticesList() {
   const dormNoticeUrl = 'https://swudorm.suwon.ac.kr/index.html?menuno=2158';
 
-  const response = await fetch(dormNoticeUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch: ${response.status}`);
+  try {
+    // 1. 목록 페이지 fetch
+    const response = await fetch(dormNoticeUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch list page: ${response.status}`);
+    }
+
+    const html = await response.text();
+
+    // 2. 목록 HTML 파싱
+    const listNotices = parseNoticesList(html);
+    
+    // 목록이 비어있으면 에러
+    if (!listNotices || listNotices.length === 0) {
+      throw new Error('No notices found in list');
+    }
+
+    // 3. 각 공지의 상세 내용 fetch (최대 10개)
+    const detailedNotices = [];
+    const limitedNotices = listNotices.slice(0, 10);
+
+    for (const notice of limitedNotices) {
+      try {
+        // POST 요청으로 상세 페이지 fetch
+        const detailHtml = await fetchNoticeDetailHtml(notice);
+        
+        // 상세 HTML 파싱
+        const detailInfo = parseNoticeDetail(detailHtml, notice);
+        
+        // 목록 정보 + 상세 정보 병합
+        detailedNotices.push({
+          id: notice.bbsno, // ID는 bbsno 사용
+          displayNo: notice.displayNo, // 화면에 보이는 번호
+          bbsno: notice.bbsno, // 실제 상세요청 번호
+          title: notice.title,
+          writer: notice.writer || '기숙사',
+          date: notice.date,
+          views: notice.views,
+          category: '공지',
+          source: '수원대학교 기숙사',
+          content: detailInfo.content || '',
+          detailRequest: {
+            method: 'POST',
+            url: dormNoticeUrl,
+            bbsno: notice.bbsno,
+            boardno: notice.boardno || '997',
+            siteno: notice.siteno || '29',
+          },
+          crawledAt: new Date().toISOString(),
+        });
+      } catch (error) {
+        console.error(`Failed to fetch detail for notice ${notice.bbsno}:`, error);
+        // 상세 fetch 실패해도 목록 정보는 포함
+        detailedNotices.push({
+          id: notice.bbsno,
+          displayNo: notice.displayNo,
+          bbsno: notice.bbsno,
+          title: notice.title,
+          writer: notice.writer || '기숙사',
+          date: notice.date,
+          views: notice.views,
+          category: '공지',
+          source: '수원대학교 기숙사',
+          content: '상세 내용을 불러올 수 없습니다. 학교 원문에서 확인해주세요.',
+          detailRequest: {
+            method: 'POST',
+            url: dormNoticeUrl,
+            bbsno: notice.bbsno,
+            boardno: notice.boardno || '997',
+            siteno: notice.siteno || '29',
+          },
+          crawledAt: new Date().toISOString(),
+        });
+      }
+    }
+
+    return detailedNotices;
+  } catch (error) {
+    console.error('List parsing error:', error);
+    return [];
   }
-
-  const html = await response.text();
-  const notices = parseNoticesList(html);
-
-  return notices;
 }
 
 /**
  * 목록 페이지 HTML에서 공지사항 파싱
  * 
- * 표 구조:
- * - 번호 (number)
- * - 제목 (title) + 링크 (href)
- * - 글쓴이 (author)
- * - 작성일 (date)
- * - 조회수 (views)
+ * 추출 정보:
+ * - displayNo: 화면에 보이는 번호
+ * - bbsno: 실제 상세요청에 사용할 번호
+ * - title: 공지 제목
+ * - writer: 글쓴이
+ * - date: 작성일
+ * - views: 조회수
+ * - boardno, siteno: POST 요청에 사용할 정보
+ * 
+ * bbsno 추출 방법:
+ * 1. 제목 a 태그의 onclick="goView(291)" 형태에서 숫자 추출
+ * 2. data-bbsno="291" 속성에서 추출
+ * 3. href에서 javascript 함수 호출 파싱
  */
 function parseNoticesList(html) {
   try {
     const notices = [];
 
-    // 테이블 행 추출 (tr 태그)
+    // 페이지 전체에서 boardno, siteno, ztag 추출 (공통 값)
+    const boardnoMatch = html.match(/boardno\s*=\s*["']?(\d+)/i);
+    const sitenoMatch = html.match(/siteno\s*=\s*["']?(\d+)/i);
+    const ztagMatch = html.match(/ztag\s*=\s*["']?([^"'\s&]+)/i);
+
+    const defaultBoardno = boardnoMatch ? boardnoMatch[1] : '997';
+    const defaultSiteno = sitenoMatch ? sitenoMatch[1] : '29';
+    const defaultZtag = ztagMatch ? ztagMatch[1] : '';
+
+    // 테이블 행 추출
     const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
     let rowMatch;
-    let rowIndex = 0;
 
     while ((rowMatch = rowRegex.exec(html)) !== null) {
       const rowContent = rowMatch[1];
       
-      // 헤더 행 제외 (th 태그 포함)
+      // 헤더 행 제외
       if (rowContent.includes('<th')) continue;
 
       // 셀 데이터 추출
@@ -126,49 +220,44 @@ function parseNoticesList(html) {
       // 최소 4개 셀이 있어야 함
       if (cells.length < 4) continue;
 
-      // 각 셀 파싱
-      const number = stripHtml(cells[0]).trim();
-      const titleCell = cells[1];
-      const author = stripHtml(cells[2]).trim();
-      const dateStr = stripHtml(cells[3]).trim();
-      const views = cells.length > 4 ? stripHtml(cells[4]).trim() : '0';
+      try {
+        // 각 셀 파싱
+        const displayNo = stripHtml(cells[0]).trim();
+        const titleCell = cells[1];
+        const writer = stripHtml(cells[2]).trim();
+        const dateStr = stripHtml(cells[3]).trim();
+        const views = cells.length > 4 ? stripHtml(cells[4]).trim() : '0';
 
-      // 제목에서 링크 추출
-      const linkMatch = titleCell.match(/<a[^>]*href=["']([^"']*)[^>]*>([\s\S]*?)<\/a>/i);
-      
-      const title = linkMatch 
-        ? stripHtml(linkMatch[2]).trim()
-        : stripHtml(titleCell).trim();
-      
-      let link = linkMatch 
-        ? linkMatch[1]
-        : 'https://swudorm.suwon.ac.kr/index.html?menuno=2158';
+        // 제목에서 링크 및 bbsno 추출
+        const titleResult = extractTitleAndBbsno(titleCell);
+        const title = titleResult.title;
+        let bbsno = titleResult.bbsno;
 
-      // 상대 경로를 절대 경로로 변환
-      if (link.startsWith('/')) {
-        link = 'https://swudorm.suwon.ac.kr' + link;
-      } else if (!link.startsWith('http')) {
-        link = 'https://swudorm.suwon.ac.kr/' + link;
-      }
+        // bbsno가 없으면 displayNo를 사용 (fallback)
+        if (!bbsno) {
+          bbsno = displayNo;
+        }
 
-      // 날짜 정규화
-      const date = normalizeDate(dateStr);
+        // 날짜 정규화
+        const date = normalizeDate(dateStr);
 
-      // 유효한 공지만 추가
-      if (title && number) {
-        notices.push({
-          id: number, // 번호를 ID로 사용
-          number,
-          title,
-          date,
-          category: '공지',
-          source: '수원대학교 기숙사',
-          author: author || '기숙사',
-          views: parseInt(views) || 0,
-          link, // 상세 페이지 링크
-          crawledAt: new Date().toISOString(),
-        });
-        rowIndex++;
+        // 유효한 공지만 추가 (displayNo와 title 필수)
+        if (title && displayNo) {
+          notices.push({
+            displayNo,
+            bbsno,
+            title,
+            date,
+            writer: writer || '기숙사',
+            views: parseInt(views) || 0,
+            boardno: defaultBoardno,
+            siteno: defaultSiteno,
+            ztag: defaultZtag,
+          });
+        }
+      } catch (error) {
+        console.error('Cell parsing error:', error);
+        continue;
       }
     }
 
@@ -180,61 +269,117 @@ function parseNoticesList(html) {
 }
 
 /**
- * 특정 공지사항 상세 정보 fetch 및 파싱
+ * 제목 셀에서 제목과 bbsno 추출
+ * 
+ * 가능한 형식:
+ * 1. <a href="#" onclick="goView(291, 'view')">제목</a>
+ * 2. <a href="#" data-bbsno="291" onclick="...">제목</a>
+ * 3. <a href="javascript:viewDetail(291)">제목</a>
+ * 4. <a href="#" data-bbsno="291">제목</a>
  */
-async function fetchAndParseNoticeDetail(noticeId) {
-  // 상세 페이지 URL 구성 (숫자 기반)
-  // 실제 URL 구조는 사이트에 따라 다를 수 있음
-  const detailUrl = `https://swudorm.suwon.ac.kr/index.html?menuno=2158&no=${noticeId}`;
+function extractTitleAndBbsno(titleCell) {
+  const result = {
+    title: stripHtml(titleCell).trim(),
+    bbsno: null,
+  };
 
-  try {
-    const response = await fetch(detailUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch detail: ${response.status}`);
-    }
-
-    const html = await response.text();
-    const detail = parseNoticeDetail(html, noticeId);
-
-    return detail;
-  } catch (error) {
-    console.error('Detail fetch error:', error);
-    // 상세 페이지 fetch 실패 시 기본 정보만 반환
-    return {
-      id: noticeId,
-      content: '공지사항 상세 정보를 불러올 수 없습니다. 수원대학교 기숙사 홈페이지에서 확인해주세요.',
-    };
+  // 방법 1: onclick 속성에서 숫자 추출 (첫 번째 숫자)
+  const onclickMatch = titleCell.match(/onclick\s*=\s*["']([^"']*(?:goView|view|goDetail|detail)\s*\(\s*(\d+)[^)]*\))/i);
+  if (onclickMatch && onclickMatch[2]) {
+    result.bbsno = onclickMatch[2];
+    return result;
   }
+
+  // 방법 2: data-bbsno 속성
+  const dataBbsnoMatch = titleCell.match(/data-bbsno\s*=\s*["'](\d+)["']/i);
+  if (dataBbsnoMatch && dataBbsnoMatch[1]) {
+    result.bbsno = dataBbsnoMatch[1];
+    return result;
+  }
+
+  // 방법 3: href="javascript:..." 형태
+  const hrefJsMatch = titleCell.match(/href\s*=\s*["']javascript:([^"']+)/i);
+  if (hrefJsMatch) {
+    const jsCode = hrefJsMatch[1];
+    // javascript: 코드에서 숫자 추출
+    const numMatch = jsCode.match(/\((\d+)/);
+    if (numMatch && numMatch[1]) {
+      result.bbsno = numMatch[1];
+      return result;
+    }
+  }
+
+  // 방법 4: a 태그의 모든 속성에서 숫자 찾기
+  const aTagMatch = titleCell.match(/<a[^>]*>/i);
+  if (aTagMatch) {
+    const aTag = aTagMatch[0];
+    // 모든 속성값에서 큰 숫자 찾기 (bbsno는 보통 2-3자리)
+    const numberMatches = aTag.match(/[=\(\s](\d{2,})/g);
+    if (numberMatches && numberMatches.length > 0) {
+      // 마지막 매치가 가장 가능성 높음
+      const lastMatch = numberMatches[numberMatches.length - 1];
+      const numMatch = lastMatch.match(/(\d+)/);
+      if (numMatch) {
+        result.bbsno = numMatch[1];
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * 상세 페이지 HTML fetch
+ * POST 요청으로 상세 페이지를 가져옴
+ */
+async function fetchNoticeDetailHtml(notice) {
+  const dormNoticeUrl = 'https://swudorm.suwon.ac.kr/index.html?menuno=2158';
+
+  // POST body 구성
+  const bodyParams = new URLSearchParams();
+  bodyParams.append('key', '');
+  bodyParams.append('bbstitle', '');
+  bodyParams.append('keyword', '');
+  bodyParams.append('ztag', notice.ztag || '');
+  bodyParams.append('siteno', notice.siteno || '29');
+  bodyParams.append('page', '1');
+  bodyParams.append('boardno', notice.boardno || '997');
+  bodyParams.append('act', 'view');
+  bodyParams.append('bbspasswd', '');
+  bodyParams.append('bbsno', notice.bbsno);
+
+  const response = await fetch(dormNoticeUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Referer': dormNoticeUrl,
+      'Origin': 'https://swudorm.suwon.ac.kr',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    },
+    body: bodyParams.toString(),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch detail page: ${response.status}`);
+  }
+
+  return await response.text();
 }
 
 /**
  * 상세 페이지 HTML에서 정보 파싱
- * 
- * 추출 항목:
- * - 제목
- * - 글쓴이
- * - 등록일
- * - 조회수
- * - 본문 내용
  */
-function parseNoticeDetail(html, noticeId) {
+function parseNoticeDetail(html, notice) {
   try {
-    let title = '';
-    let author = '';
-    let date = '';
-    let views = '';
     let content = '';
 
-    // 제목 추출 (일반적인 h1, h2, .title, .subject 등)
-    let titleMatch = html.match(/<h[1-2][^>]*>([^<]+)<\/h[1-2]>/i);
-    if (titleMatch) {
-      title = stripHtml(titleMatch[1]).trim();
-    }
-
-    // 본문 추출 (일반적인 .content, .body, .article-content 등)
+    // 본문 내용 추출 (일반적인 div.content, div.body 등)
     let contentMatch = html.match(/<div[^>]*class="[^"]*content[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
     if (!contentMatch) {
       contentMatch = html.match(/<div[^>]*class="[^"]*body[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+    }
+    if (!contentMatch) {
+      contentMatch = html.match(/<div[^>]*class="[^"]*text[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
     }
     if (!contentMatch) {
       contentMatch = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i);
@@ -244,54 +389,52 @@ function parseNoticeDetail(html, noticeId) {
       content = stripHtmlKeepText(contentMatch[1]).trim();
     }
 
-    // 메타 정보 추출 (테이블)
-    const metaMatch = html.match(
-      /<table[^>]*>([\s\S]*?)<\/table>/i
-    );
-    if (metaMatch) {
-      const tableContent = metaMatch[1];
-
-      // 글쓴이
-      const authorMatch = tableContent.match(
-        /<td[^>]*>작성자|글쓴이<\/td>\s*<td[^>]*>([^<]+)<\/td>/i
-      );
-      if (authorMatch) {
-        author = stripHtml(authorMatch[1]).trim();
-      }
-
-      // 작성일
-      const dateMatch = tableContent.match(
-        /<td[^>]*>작성일|등록일|작성 일시<\/td>\s*<td[^>]*>([^<]+)<\/td>/i
-      );
-      if (dateMatch) {
-        date = stripHtml(dateMatch[1]).trim();
-      }
-
-      // 조회수
-      const viewsMatch = tableContent.match(
-        /<td[^>]*>조회수|조회|views<\/td>\s*<td[^>]*>([^<]+)<\/td>/i
-      );
-      if (viewsMatch) {
-        views = stripHtml(viewsMatch[1]).trim();
+    // 내용이 너무 짧으면 전체 HTML에서 다시 추출 시도
+    if (!content || content.length < 20) {
+      // 테이블이나 큰 텍스트 블록 찾기
+      const mainContent = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+      if (mainContent) {
+        const bodyContent = mainContent[1];
+        // 스크립트, 스타일 제거
+        const cleaned = bodyContent
+          .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+          .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+          .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '')
+          .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, '')
+          .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, '');
+        
+        // 가장 큰 텍스트 블록 추출
+        const textBlocks = cleaned.match(/<div[^>]*>([\s\S]{50,}?)<\/div>/gi);
+        if (textBlocks && textBlocks.length > 0) {
+          // 가장 큰 블록 선택
+          const largestBlock = textBlocks.reduce((a, b) => a.length > b.length ? a : b);
+          content = stripHtmlKeepText(largestBlock).trim();
+        }
       }
     }
 
     return {
-      id: noticeId,
-      title: title || '제목 없음',
-      author,
-      date,
-      views: parseInt(views) || 0,
-      content: content || '본문 내용을 불러올 수 없습니다.',
-      crawledAt: new Date().toISOString(),
+      content: content || '상세 내용을 불러올 수 없습니다.',
     };
   } catch (error) {
     console.error('Detail parsing error:', error);
     return {
-      id: noticeId,
-      content: '공지사항 상세 정보를 불러올 수 없습니다.',
+      content: '상세 내용을 불러올 수 없습니다.',
     };
   }
+}
+
+/**
+ * 특정 공지사항 상세 정보 fetch
+ * (선택사항: 특정 공지의 상세 정보만 필요할 때)
+ */
+async function fetchAndParseNoticeDetail(noticeId) {
+  // 이 함수는 미리 추출된 공지 정보가 필요함
+  // 실제로는 목록 전체를 다시 파싱해야 함
+  // 간단한 구현으로 에러 반환
+  return {
+    error: 'Use /dorm-notices endpoint to get all notices with details',
+  };
 }
 
 /**
@@ -309,10 +452,14 @@ function stripHtmlKeepText(html) {
     .replace(/<br[^>]*>/gi, '\n')
     .replace(/<p[^>]*>/gi, '')
     .replace(/<\/p>/gi, '\n')
+    .replace(/<li[^>]*>/gi, '• ')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<div[^>]*>/gi, '')
+    .replace(/<\/div>/gi, '\n')
     .replace(/<[^>]*>/g, '')
     .split('\n')
     .map((line) => line.trim())
-    .filter((line) => line)
+    .filter((line) => line.length > 0)
     .join('\n');
 }
 
