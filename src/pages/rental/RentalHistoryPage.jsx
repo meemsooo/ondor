@@ -1,31 +1,44 @@
-import { Header, Card, Badge, EmptyState } from '../../components/common';
-import { rentalHistory } from '../../data';
+import { useNavigate } from 'react-router-dom';
+import { Header, Card, Badge, EmptyState, Button } from '../../components/common';
+import { getAll, getRentalType } from '../../services/rentalService';
+import { useLiveQuery } from '../../hooks/useLiveQuery';
+import { isMine } from '../../services/storage';
+import { formatRelativeTime } from '../../utils/format';
+import { PATHS, to } from '../../routes/paths';
 import './RentalHistoryPage.css';
 
 export default function RentalHistoryPage() {
+  const navigate = useNavigate();
+  const all = useLiveQuery(getAll);
+  const mineList = all.filter(isMine);
+
   return (
     <>
-      <Header title="대여 내역" back />
+      <Header title="내 대여 글" back />
       <div className="page stack">
-        {rentalHistory.length === 0 ? (
-          <EmptyState emoji="📦" title="대여 내역이 없어요" />
+        {mineList.length === 0 ? (
+          <EmptyState
+            emoji="📦"
+            title="아직 등록한 대여 물품이 없어요"
+            action={<Button onClick={() => navigate(PATHS.RENTAL_NEW)}>물품 등록</Button>}
+          />
         ) : (
-          rentalHistory.map((h) => (
-            <Card key={h.id}>
-              <div className="rh-row">
-                <div className="rh-row__info">
-                  <div className="rh-row__head">
-                    <Badge tone={h.role === '빌림' ? 'info' : 'primary'}>{h.role}</Badge>
-                    <span className="rh-row__title">{h.title}</span>
+          mineList.map((r) => {
+            const meta = getRentalType(r.rentalType);
+            return (
+              <Card key={r.id} onClick={() => navigate(to.rentalDetail(r.id))}>
+                <div className="rh-row">
+                  <div className="rh-row__info">
+                    <div className="rh-row__head">
+                      <Badge tone={meta?.tone ?? 'muted'}>{meta?.label}</Badge>
+                      <span className="rh-row__title">{r.itemName}</span>
+                    </div>
+                    <p className="rh-row__sub">{formatRelativeTime(r.createdAt)}</p>
                   </div>
-                  <p className="rh-row__sub">
-                    {h.counterpart} · {h.period}
-                  </p>
                 </div>
-                <Badge tone={h.status === '대여중' ? 'warning' : 'success'}>{h.status}</Badge>
-              </div>
-            </Card>
-          ))
+              </Card>
+            );
+          })
         )}
       </div>
     </>

@@ -62,6 +62,107 @@
   font-weight: var(--fw-semibold);
 }
 
+/* 입력 오류 / 도움말 */
+.form-input.is-error,
+.form-textarea.is-error,
+.form-select.is-error {
+  border-color: var(--color-danger);
+}
+.form-error {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+.form-hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* 두 입력을 가로로 */
+.form-row {
+  display: flex;
+  gap: var(--space-3);
+}
+.form-row > .form-field {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 이미지 첨부 / 미리보기 */
+.form-image {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 180px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-tertiary);
+  font-size: var(--text-sm);
+  overflow: hidden;
+}
+.form-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.form-image__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.form-image__placeholder span:first-child {
+  font-size: 32px;
+}
+.form-image__remove {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-overlay);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* 필수 표시 */
+.form-required {
+  color: var(--color-danger);
+  margin-left: 2px;
+}
+
+/* 작성자 프로필 표시 */
+.gbf-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-md);
+}
+.gbf-author__name {
+  font-weight: var(--fw-semibold);
+}
+.gbf-author__loc {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* 폼 하단 버튼 영역 (네비게이션에 가리지 않도록 여백 확보) */
+.form-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+.form-actions > * {
+  flex: 1;
+}
+
 /* 하단 고정 제출 바 */
 .form-submit-bar {
   position: sticky;

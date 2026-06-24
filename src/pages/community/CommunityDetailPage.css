@@ -1,0 +1,25 @@
+.cm-detail__title {
+  font-size: var(--text-h1);
+  font-weight: var(--fw-bold);
+  margin: var(--space-2) 0 var(--space-3);
+  word-break: break-word;
+}
+.cm-detail__byline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+.cm-detail__author {
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+}
+.cm-detail__time {
+  color: var(--color-text-tertiary);
+}
+.cm-detail__content {
+  font-size: var(--text-body);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

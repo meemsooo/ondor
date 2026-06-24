@@ -1,15 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { Header, Card, Avatar } from '../../components/common';
-import { currentUser } from '../../data';
+import { currentUser } from '../../config/currentUser';
+import { useLiveQuery } from '../../hooks/useLiveQuery';
+import { isMine } from '../../services/storage';
+import { getAll as getHelpRequests } from '../../services/helpRequestService';
+import { getAll as getGroupBuys } from '../../services/groupBuyService';
+import { getAll as getRentals } from '../../services/rentalService';
 import { PATHS } from '../../routes/paths';
 import './MyPage.css';
-
-// 활동 내역 요약 (더미)
-const activityStats = [
-  { label: '도움 준 횟수', value: 12, emoji: '🤝' },
-  { label: '공동구매', value: 8, emoji: '🛒' },
-  { label: '대여', value: 5, emoji: '📦' },
-];
 
 const menuGroups = [
   {
@@ -34,6 +32,16 @@ const menuGroups = [
 
 export default function MyPage() {
   const navigate = useNavigate();
+
+  // 실제 작성 데이터 기반 활동 요약
+  const helpCount = useLiveQuery(() => getHelpRequests().filter(isMine).length);
+  const groupBuyCount = useLiveQuery(() => getGroupBuys().filter(isMine).length);
+  const rentalCount = useLiveQuery(() => getRentals().filter(isMine).length);
+  const activityStats = [
+    { label: '도움요청', value: helpCount, emoji: '🙋' },
+    { label: '공동구매', value: groupBuyCount, emoji: '🛒' },
+    { label: '대여', value: rentalCount, emoji: '📦' },
+  ];
 
   return (
     <>

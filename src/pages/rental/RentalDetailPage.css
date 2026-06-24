@@ -1,0 +1,48 @@
+.rental-detail__title {
+  font-size: var(--text-h1);
+  font-weight: var(--fw-bold);
+  margin: var(--space-2) 0 var(--space-1);
+  word-break: break-word;
+}
+.rental-detail__time {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+.rental-detail__section {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+.rental-detail__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+}
+.rental-detail__row > span:first-child {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+.rental-detail__row > span:last-child {
+  text-align: right;
+  word-break: break-word;
+}
+.rental-detail__desc {
+  font-size: var(--text-body);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.rental-detail__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.rental-detail__author-name {
+  font-weight: var(--fw-semibold);
+}
+.rental-detail__author-sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}

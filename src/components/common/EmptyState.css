@@ -20,3 +20,6 @@
   margin-top: var(--space-1);
   font-size: var(--text-sm);
 }
+.empty-state__action {
+  margin-top: var(--space-5);
+}
