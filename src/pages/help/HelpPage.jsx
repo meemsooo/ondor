@@ -1,3 +1,4 @@
+console.log("내가 만든 HelpPage");
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header, Card, Badge, SegmentedTabs, EmptyState, FAB } from '../../components/common';
@@ -24,9 +25,26 @@ export default function HelpPage() {
     setRefresh(!refresh);
   }
 };
+const handleAccept = (id) => {
+  const index = helpRequests.findIndex((h) => h.id === id);
+
+  if (index !== -1) {
+    helpRequests[index].status = "matched";
+    setRefresh(!refresh);
+  }
+};
+
+const handleComplete = (id) => {
+  const index = helpRequests.findIndex((h) => h.id === id);
+
+  if (index !== -1) {
+    helpRequests[index].status = "done";
+    setRefresh(!refresh);
+  }
+};
 
   const list = helpRequests.filter(
-    (h) => tab === 'all' || h.categoryId === tab
+    (h) => tab === 'all' || h.categoryId === tab && h.status === 'waiting'
   );
 
   return (
@@ -71,6 +89,17 @@ export default function HelpPage() {
                   <span>🎁 {h.reward}</span>
                   <span className="help-card__time">{h.createdAt}</span>
                 </div>
+                {h.status === "waiting" && (
+                 <button
+                   className="accept-button" // 
+                   onClick={(e) => {
+                      e.stopPropagation();
+                      handleAccept(h.id);
+                  }}
+               >
+                  요청 수락
+               </button>
+                 )}
                 {/* ✅ 삭제 버튼 (맨 아래!) */}
                 {h.location === '내 위치' && (
                 <div style={{ textAlign: "right", marginTop: "6px" }}>
