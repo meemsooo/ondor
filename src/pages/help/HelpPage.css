@@ -55,3 +55,23 @@
 .help-card__time {
   margin-left: auto;
 }
+
+.accept-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #FF8A4C; /* 아래 주황색 버튼과 통일감을 주는 오렌지 색상 */
+  color: white;
+  border: none;
+  border-radius: 24px; /* 각진 버튼을 주황색 버튼처럼 둥글게 만들어줍니다 */
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 14px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08); /* 부드러운 그림자 효과 */
+  transition: all 0.2s ease;
+}
+
+.accept-button:hover {
+  background-color: #ff732b; /* 마우스 올렸을 때 조금 더 진해지는 효과 */
+  transform: translateY(-1px); /* 아주 살짝 튀어나오는 느낌 */
+}
